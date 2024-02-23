@@ -3,25 +3,6 @@ namespace myImages {
 
     helpers._registerFactory("image", function(name: string) {
         switch(helpers.stringTrim(name)) {
-            case "image1":
-            case "p1":return img`
-. . . . . . 2 2 2 2 2 . . . . . 
-. . . . . . 2 2 2 2 2 . . . . . 
-. . . . . . 2 2 2 2 2 . . . . . 
-. . . . . . 2 . . . . . . . . . 
-. . . . . . 2 . . . . . . . . . 
-. . . . . . 2 . . . . . . . . . 
-. . . . . . 2 . . . . . . . . . 
-. . . . . . 2 . . . . . . . . . 
-e e e e e e e e e e e e e e e e 
-e e e e e e e e e e e e e e e e 
-e e e e e e e e e e e e e e e e 
-e e e e e e e e e e e e e e e e 
-. e e e e e e e e e e e e e e . 
-. . e e e e e e e e e e e e . . 
-. . . e e e e e e e e e e . . . 
-. . . . e e e e e e e e . . . . 
-`;
             case "image2":
             case "p2":return img`
 . . . . . . 8 8 8 8 8 . . . . . 
@@ -166,6 +147,25 @@ e e e e e e e e e e e e e e e e
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+`;
+            case "image1":
+            case "p1":return img`
+. . . . . . . . . . . . . . . . 
+. . . . . . 2 2 2 2 2 . . . . . 
+. . . . . . 2 2 2 2 2 . . . . . 
+. . . . . . 2 2 2 2 2 . . . . . 
+. . . . . . 2 . . . . . . . . . 
+. . . . . . 2 . . . . . . . . . 
+. . . . . . 2 . . . . . . . . . 
+. . . . . . 2 . . . . . . . . . 
+. e e e e e e e e e e e e e e . 
+. e e e e e e e e e e e e e e . 
+. e e e e e e e e e e e e e e . 
+. . e e e e e e e e e e e e . . 
+. . . e e e e e e e e e e . . . 
+. . . . e e e e e e e e . . . . 
+. . . . . e e e e e e . . . . . 
 . . . . . . . . . . . . . . . . 
 `;
         }

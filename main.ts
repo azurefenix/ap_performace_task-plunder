@@ -52,11 +52,9 @@ sprites.onDestroyed(SpriteKind.cross, function (sprite) {
 controller.player3.onEvent(ControllerEvent.Connected, function () {
 	
 })
+// use counter variable for number of players, then direct to different functions for each version
 controller.player2.onEvent(ControllerEvent.Connected, function () {
 	
-})
-sprites.onOverlap(SpriteKind.storm, SpriteKind.cross, function (sprite, otherSprite) {
-    sprites.destroy(otherSprite)
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.storm, function (sprite, otherSprite) {
     sprite.setVelocity(5, 5)
