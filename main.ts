@@ -3,6 +3,10 @@ namespace SpriteKind {
     export const cross = SpriteKind.create()
     export const storm = SpriteKind.create()
 }
+info.player1.onScore(1, function () {
+    end = true
+    gameEnd(1)
+})
 controller.player4.onEvent(ControllerEvent.Connected, function () {
 	
 })
@@ -46,17 +50,23 @@ sprites.onDestroyed(SpriteKind.cross, function (sprite) {
         tiles.placeOnTile(cross, crossLocs.pop())
     }
 })
-function gameEnd () {
+function gameEnd (winner: number) {
     sprites.destroyAllSpritesOfKind(SpriteKind.Player)
     sprites.destroyAllSpritesOfKind(SpriteKind.cross)
     sprites.destroyAllSpritesOfKind(SpriteKind.storm)
+    scene.setBackgroundImage(assets.image`endScreen`)
+    tiles.setCurrentTilemap(tilemap`endMap`)
+    if (winner == 1) {
+        winText = textsprite.create("Player 1 Wins!")
+    }
+    winText.setPosition(38, 57)
+    winText.setMaxFontHeight(10)
+    winText.setOutline(1, 6)
+    pause(5000)
+    game.reset()
 }
 controller.player3.onEvent(ControllerEvent.Connected, function () {
 	
-})
-info.player1.onScore(10, function () {
-    end = true
-    gameEnd()
 })
 function wantPlunderIsland () {
     wantPlunder = game.askForString("Do you want to plunder this island? (y/n)", 1)
@@ -123,6 +133,7 @@ let pStrength = 0
 let islandStrength = 0
 let islandDifficulty = 0
 let wantPlunder = ""
+let winText: TextSprite = null
 let count = 0
 let row = 0
 let col = 0
