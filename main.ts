@@ -3,10 +3,6 @@ namespace SpriteKind {
     export const cross = SpriteKind.create()
     export const storm = SpriteKind.create()
 }
-info.player1.onScore(1, function () {
-    end = true
-    gameEnd(1)
-})
 controller.player4.onEvent(ControllerEvent.Connected, function () {
 	
 })
@@ -67,6 +63,10 @@ function gameEnd (winner: number) {
 }
 controller.player3.onEvent(ControllerEvent.Connected, function () {
 	
+})
+info.player1.onScore(10, function () {
+    end = true
+    gameEnd(1)
 })
 function wantPlunderIsland () {
     wantPlunder = game.askForString("Do you want to plunder this island? (y/n)", 1)
@@ -148,7 +148,6 @@ controller.player1.moveSprite(p1)
 p1.setPosition(0, 0)
 scene.cameraFollowSprite(p1)
 info.player1.setScore(0)
-p1.setStayInScreen(false)
 end = false
 cross = sprites.create(assets.image`xTreasure`, SpriteKind.cross)
 crossLocs = [cross.tilemapLocation()]
@@ -176,16 +175,40 @@ forever(function () {
         // if plundered island plundered, island loose point
         // if n
         // wait 5 sec
-        if (p1.isHittingTile(CollisionDirection.Left)) {
+        if (p1.tileKindAt(TileDirection.Left, assets.tile`landSand2`)) {
             wantPlunderIsland()
         }
-        if (p1.isHittingTile(CollisionDirection.Top)) {
+        if (p1.tileKindAt(TileDirection.Top, assets.tile`landSand3`)) {
             wantPlunderIsland()
         }
-        if (p1.isHittingTile(CollisionDirection.Right)) {
+        if (p1.tileKindAt(TileDirection.Right, assets.tile`landSand4`)) {
             wantPlunderIsland()
         }
-        if (p1.isHittingTile(CollisionDirection.Bottom)) {
+        if (p1.tileKindAt(TileDirection.Bottom, assets.tile`landSand`)) {
+            wantPlunderIsland()
+        }
+        if (p1.tileKindAt(TileDirection.Left, assets.tile`coast3`)) {
+            wantPlunderIsland()
+        }
+        if (p1.tileKindAt(TileDirection.Left, assets.tile`coast2`)) {
+            wantPlunderIsland()
+        }
+        if (p1.tileKindAt(TileDirection.Top, assets.tile`coast4`)) {
+            wantPlunderIsland()
+        }
+        if (p1.tileKindAt(TileDirection.Top, assets.tile`coast2`)) {
+            wantPlunderIsland()
+        }
+        if (p1.tileKindAt(TileDirection.Right, assets.tile`coast`)) {
+            wantPlunderIsland()
+        }
+        if (p1.tileKindAt(TileDirection.Right, assets.tile`coast4`)) {
+            wantPlunderIsland()
+        }
+        if (p1.tileKindAt(TileDirection.Bottom, assets.tile`coast`)) {
+            wantPlunderIsland()
+        }
+        if (p1.tileKindAt(TileDirection.Bottom, assets.tile`coast2`)) {
             wantPlunderIsland()
         }
     }
