@@ -5,9 +5,6 @@ namespace SpriteKind {
     export const skull = SpriteKind.create()
     export const noInteraction = SpriteKind.create()
 }
-/**
- * maybe add enemy ships (british armada) that subtract life and/or points
- */
 // add bool so check if cross or storm
 // if cross can't be on land if storm can
 // if storm can't be on player if cross can
@@ -41,14 +38,23 @@ function newLoc (list: tiles.Location[], cORs: boolean) {
         }
     }
 }
+controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (p.tileKindAt(TileDirection.Top, assets.tile`sea`)) {
+        tiles.placeOnTile(p, p.tilemapLocation().getNeighboringLocation(CollisionDirection.Top))
+    }
+})
 function xMarksTheSpot () {
     messages = ["You found an abandoned ship. Gain one plunder point.", "Mutiny. loose 2 lives", "Taxes :("]
-    messageResults = [1, 2, -3]
+    messageResults = [1, -2, -3]
     messagePointsOrLife = [true, false, true]
-    whichMessage = randint(1, 3)
+    whichMessage = randint(0, 2)
     game.splash(messages[whichMessage])
     if (messagePointsOrLife[whichMessage]) {
-        info.changeScoreBy(messageResults[whichMessage])
+        if (info.score() > Math.abs(messageResults[whichMessage])) {
+            info.changeScoreBy(messageResults[whichMessage])
+        } else {
+            info.setLife(0)
+        }
     } else {
         info.changeLifeBy(messageResults[whichMessage])
         if (info.life() > 4) {
@@ -61,65 +67,17 @@ sprites.onDestroyed(SpriteKind.cross, function (sprite) {
         cross = sprites.create(assets.image`xTreasure`, SpriteKind.cross)
         crossLocs.push(newLoc(crossLocs, true))
         tiles.placeOnTile(cross, crossLocs.pop())
+        xMarksTheSpot()
     }
 })
-function changeIslandIcon () {
-    game.splash("running change icon")
-    aroundMIsland0 = [
-    tiles.getTileLocation(2, 3),
-    tiles.getTileLocation(2, 4),
-    tiles.getTileLocation(2, 5),
-    tiles.getTileLocation(2, 6),
-    tiles.getTileLocation(3, 2),
-    tiles.getTileLocation(4, 2),
-    tiles.getTileLocation(5, 2),
-    tiles.getTileLocation(6, 3),
-    tiles.getTileLocation(6, 4),
-    tiles.getTileLocation(6, 5),
-    tiles.getTileLocation(6, 6),
-    tiles.getTileLocation(3, 7),
-    tiles.getTileLocation(4, 7),
-    tiles.getTileLocation(4, 7)
-    ]
-    game.splash("starting around Misland0")
-    game.splash(p.tilemapLocation())
-    for (let value of aroundMIsland0) {
-        if (value == p.tilemapLocation()) {
-            game.splash("location in list")
-            if (flagCompare.image == mIsland0.image) {
-                game.splash("You have already plundered this island")
-            } else {
-                game.splash("image changed")
-                mIsland0.setImage(assets.image`p1Flag`)
-                break;
-            }
-        }
+/**
+ * maybe add enemy ships (british armada) that subtract life and/or points
+ */
+controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (p.tileKindAt(TileDirection.Left, assets.tile`sea`)) {
+        tiles.placeOnTile(p, p.tilemapLocation().getNeighboringLocation(CollisionDirection.Left))
     }
-    aroundSIsland0 = [
-    tiles.getTileLocation(15, 1),
-    tiles.getTileLocation(16, 1),
-    tiles.getTileLocation(17, 1),
-    tiles.getTileLocation(18, 1),
-    tiles.getTileLocation(18, 2),
-    tiles.getTileLocation(18, 3),
-    tiles.getTileLocation(18, 4),
-    tiles.getTileLocation(17, 4),
-    tiles.getTileLocation(16, 4),
-    tiles.getTileLocation(15, 4),
-    tiles.getTileLocation(15, 3),
-    tiles.getTileLocation(15, 2)
-    ]
-    for (let value of aroundSIsland0) {
-        if (value == p.tilemapLocation()) {
-            if (flagCompare.image == sIsland0.image) {
-                game.splash("You have already plundered this island")
-            } else {
-                sIsland0.setImage(assets.image`p1Flag`)
-                break;
-            }
-        }
-    }
-}
+})
 function gameEnd (wORl: boolean) {
     sprites.destroyAllSpritesOfKind(SpriteKind.Player)
     sprites.destroyAllSpritesOfKind(SpriteKind.cross)
@@ -133,13 +91,23 @@ function gameEnd (wORl: boolean) {
     }
     winText.setPosition(38, 57)
     winText.setMaxFontHeight(10)
-    winText.setOutline(1, 6)
+    winText.setOutline(1, 10)
     pause(5000)
     game.reset()
 }
 info.onScore(7, function () {
     end = true
     gameEnd(true)
+})
+controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (p.tileKindAt(TileDirection.Right, assets.tile`sea`)) {
+        tiles.placeOnTile(p, p.tilemapLocation().getNeighboringLocation(CollisionDirection.Right))
+    }
+})
+controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (p.tileKindAt(TileDirection.Bottom, assets.tile`sea`)) {
+        tiles.placeOnTile(p, p.tilemapLocation().getNeighboringLocation(CollisionDirection.Bottom))
+    }
 })
 info.onLifeZero(function () {
     end = true
@@ -148,7 +116,6 @@ info.onLifeZero(function () {
 function wantPlunderIsland () {
     if (game.ask("Plunder Island?")) {
         if (tryPlunderIsland()) {
-            changeIslandIcon()
             game.splash("Island plundered")
             info.changeScoreBy(1)
             pause(2000)
@@ -160,6 +127,7 @@ function wantPlunderIsland () {
         pause(2000)
     }
 }
+// change tiles in storm, then when player overlap with tile
 sprites.onOverlap(SpriteKind.Player, SpriteKind.storm, function (sprite, otherSprite) {
     info.changeLifeBy(-1)
     pause(2000)
@@ -178,7 +146,7 @@ function tryPlunderIsland () {
     while (islandDifficulty > 3) {
         islandDifficulty = game.askForNumber("How many skulls were on the island? (1, 2, 3)", 1)
     }
-    islandStrength = 7
+    islandStrength = randint(0, 10)
     pStrength = game.askForNumber("Guess a number", 2)
     if (islandDifficulty == 3) {
         if (pStrength == islandStrength) {
@@ -206,8 +174,6 @@ let pStrength = 0
 let islandStrength = 0
 let islandDifficulty = 0
 let winText: TextSprite = null
-let aroundSIsland0: tiles.Location[] = []
-let aroundMIsland0: tiles.Location[] = []
 let whichMessage = 0
 let messagePointsOrLife: boolean[] = []
 let messageResults: number[] = []
@@ -216,17 +182,13 @@ let count = 0
 let row = 0
 let col = 0
 let posHolder: Sprite = null
-let flagCompare: Sprite = null
-let mIsland0: Sprite = null
-let sIsland0: Sprite = null
 let crossLocs: tiles.Location[] = []
 let cross: Sprite = null
 let end = false
 let p: Sprite = null
 tiles.setCurrentTilemap(tilemap`twoPMap`)
 p = sprites.create(assets.image`p1`, SpriteKind.Player)
-controller.moveSprite(p)
-p.setPosition(303, 7)
+tiles.placeOnTile(p, tiles.getTileLocation(19, 0))
 scene.cameraFollowSprite(p)
 info.setScore(0)
 info.setLife(3)
@@ -239,19 +201,19 @@ let storm = sprites.create(assets.image`storm`, SpriteKind.storm)
 let stormLocs = [storm.tilemapLocation()]
 stormLocs.push(newLoc(stormLocs, false))
 tiles.placeOnTile(storm, stormLocs.pop())
-sIsland0 = sprites.create(assets.image`skullIslandStrength1`, SpriteKind.skull)
+let sIsland0 = sprites.create(assets.image`skullIslandStrength1`, SpriteKind.skull)
 sIsland0.setPosition(256, 30)
 let sIsland1 = sprites.create(assets.image`skullIslandStrength1`, SpriteKind.skull)
 sIsland1.setPosition(224, 110)
 let sIsland2 = sprites.create(assets.image`skullIslandStrength1`, SpriteKind.skull)
 sIsland2.setPosition(128, 190)
-mIsland0 = sprites.create(assets.image`skullIslandStrength2`, SpriteKind.skull)
+let mIsland0 = sprites.create(assets.image`skullIslandStrength2`, SpriteKind.skull)
 mIsland0.setPosition(56, 65)
 let mIsland1 = sprites.create(assets.image`skullIslandStrength2`, SpriteKind.skull)
 mIsland1.setPosition(40, 265)
 let lIsland = sprites.create(assets.image`skullIslandStrength3`, SpriteKind.skull)
 lIsland.setPosition(248, 250)
-flagCompare = sprites.create(assets.image`p1Flag`, SpriteKind.noInteraction)
+let flagCompare = sprites.create(assets.image`p1Flag`, SpriteKind.noInteraction)
 flagCompare.setPosition(-20, -20)
 forever(function () {
     if (true) {
