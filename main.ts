@@ -42,14 +42,18 @@ function newLoc (list: tiles.Location[], cORs: boolean) {
     }
 }
 function xMarksTheSpot () {
-    messages = ["a", "b", "c"]
-    messageResults = [0, 1, 0]
-    if (true) {
-    	
-    } else if (false) {
-    	
-    } else if (false) {
-    	
+    messages = ["You found an abandoned ship. Gain one plunder point.", "Mutiny. loose 2 lives", "Taxes :("]
+    messageResults = [1, 2, -3]
+    messagePointsOrLife = [true, false, true]
+    whichMessage = randint(1, 3)
+    game.splash(messages[whichMessage])
+    if (messagePointsOrLife[whichMessage]) {
+        info.changeScoreBy(messageResults[whichMessage])
+    } else {
+        info.changeLifeBy(messageResults[whichMessage])
+        if (info.life() > 4) {
+            info.setLife(4)
+        }
     }
 }
 sprites.onDestroyed(SpriteKind.cross, function (sprite) {
@@ -60,6 +64,7 @@ sprites.onDestroyed(SpriteKind.cross, function (sprite) {
     }
 })
 function changeIslandIcon () {
+    game.splash("running change icon")
     aroundMIsland0 = [
     tiles.getTileLocation(2, 3),
     tiles.getTileLocation(2, 4),
@@ -76,11 +81,15 @@ function changeIslandIcon () {
     tiles.getTileLocation(4, 7),
     tiles.getTileLocation(4, 7)
     ]
+    game.splash("starting around Misland0")
+    game.splash(p.tilemapLocation())
     for (let value of aroundMIsland0) {
         if (value == p.tilemapLocation()) {
+            game.splash("location in list")
             if (flagCompare.image == mIsland0.image) {
                 game.splash("You have already plundered this island")
             } else {
+                game.splash("image changed")
                 mIsland0.setImage(assets.image`p1Flag`)
                 break;
             }
@@ -128,7 +137,7 @@ function gameEnd (wORl: boolean) {
     pause(5000)
     game.reset()
 }
-info.onScore(10, function () {
+info.onScore(7, function () {
     end = true
     gameEnd(true)
 })
@@ -169,7 +178,7 @@ function tryPlunderIsland () {
     while (islandDifficulty > 3) {
         islandDifficulty = game.askForNumber("How many skulls were on the island? (1, 2, 3)", 1)
     }
-    islandStrength = randint(0, 10)
+    islandStrength = 7
     pStrength = game.askForNumber("Guess a number", 2)
     if (islandDifficulty == 3) {
         if (pStrength == islandStrength) {
@@ -199,6 +208,8 @@ let islandDifficulty = 0
 let winText: TextSprite = null
 let aroundSIsland0: tiles.Location[] = []
 let aroundMIsland0: tiles.Location[] = []
+let whichMessage = 0
+let messagePointsOrLife: boolean[] = []
 let messageResults: number[] = []
 let messages: string[] = []
 let count = 0
