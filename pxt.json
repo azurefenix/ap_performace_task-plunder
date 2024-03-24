@@ -2,8 +2,7 @@
     "name": "ap_performace_task-plunder",
     "description": "",
     "dependencies": {
-        "device": "*",
-        "arcade-text": "github:microsoft/arcade-text#v1.3.0"
+        "device": "*"
     },
     "files": [
         "main.blocks",

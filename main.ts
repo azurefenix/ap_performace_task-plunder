@@ -5,7 +5,7 @@ namespace SpriteKind {
     export const skull = SpriteKind.create()
     export const noInteraction = SpriteKind.create()
 }
-// add bool so check if cross or storm
+// add bool to check if cross or storm
 // if cross can't be on land if storm can
 // if storm can't be on player if cross can
 function newLoc (list: tiles.Location[], cORs: boolean) {
@@ -23,7 +23,7 @@ function newLoc (list: tiles.Location[], cORs: boolean) {
         } else {
             // also check if sprites overlap
             if (posHolder.tilemapLocation() != p.tilemapLocation()) {
-                if (posHolder.tilemapLocation() != cross.tilemapLocation()) {
+                if (posHolder.tilemapLocation() != cross2.tilemapLocation()) {
                     count = 0
                     for (let value of list) {
                         if (value == posHolder.tilemapLocation()) {
@@ -43,6 +43,7 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
         tiles.placeOnTile(p, p.tilemapLocation().getNeighboringLocation(CollisionDirection.Top))
     }
 })
+// Choose message for X sprites, use boolean to determine if add/subtract form points or life
 function xMarksTheSpot () {
     messageNames = [
     "The Kraken",
@@ -141,20 +142,18 @@ function xMarksTheSpot () {
 }
 sprites.onDestroyed(SpriteKind.cross, function (sprite) {
     if (!(end)) {
-        cross = sprites.create(assets.image`xTreasure`, SpriteKind.cross)
+        cross2 = sprites.create(assets.image`xTreasure`, SpriteKind.cross)
         crossLocs.push(newLoc(crossLocs, true))
-        tiles.placeOnTile(cross, crossLocs.pop())
+        tiles.placeOnTile(cross2, crossLocs.pop())
         xMarksTheSpot()
     }
 })
-/**
- * maybe add enemy ships (british armada) that subtract life and/or points
- */
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     if (p.tileKindAt(TileDirection.Left, assets.tile`sea`)) {
         tiles.placeOnTile(p, p.tilemapLocation().getNeighboringLocation(CollisionDirection.Left))
     }
 })
+// at game end destroy all sprites and display win/loose to player
 function gameEnd (wORl: boolean) {
     sprites.destroyAllSpritesOfKind(SpriteKind.Player)
     sprites.destroyAllSpritesOfKind(SpriteKind.cross)
@@ -190,6 +189,9 @@ info.onLifeZero(function () {
     end = true
     gameEnd(false)
 })
+// ask user if want to plunder Island
+// if yes, call tryPlunderIsland fuction to determine is plunder was successful
+// if successful, player gains 1 pt
 function wantPlunderIsland () {
     if (game.ask("Plunder Island?")) {
         if (tryPlunderIsland()) {
@@ -218,6 +220,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.cross, function (sprite, otherSp
 // easy: if guess number within 2 of random number
 // medium: if guess number within 1 of random number
 // hard: if guess number is random number
+// if player guess within bounds give return true so player gains 1 pt
 function tryPlunderIsland () {
     islandDifficulty = game.askForNumber("How many skulls were on the island? (1, 2, 3)", 1)
     while (islandDifficulty > 3) {
@@ -261,7 +264,7 @@ let row = 0
 let col = 0
 let posHolder: Sprite = null
 let crossLocs: tiles.Location[] = []
-let cross: Sprite = null
+let cross2: Sprite = null
 let end = false
 let p: Sprite = null
 tiles.setCurrentTilemap(tilemap`twoPMap`)
@@ -271,14 +274,14 @@ scene.cameraFollowSprite(p)
 info.setScore(0)
 info.setLife(3)
 end = false
-cross = sprites.create(assets.image`xTreasure`, SpriteKind.cross)
-crossLocs = [cross.tilemapLocation()]
+cross2 = sprites.create(assets.image`xTreasure`, SpriteKind.cross)
+crossLocs = [cross2.tilemapLocation()]
 crossLocs.push(newLoc(crossLocs, true))
-tiles.placeOnTile(cross, crossLocs.pop())
-let storm = sprites.create(assets.image`storm`, SpriteKind.storm)
-let stormLocs = [storm.tilemapLocation()]
+tiles.placeOnTile(cross2, crossLocs.pop())
+let storm2 = sprites.create(assets.image`storm`, SpriteKind.storm)
+let stormLocs = [storm2.tilemapLocation()]
 stormLocs.push(newLoc(stormLocs, false))
-tiles.placeOnTile(storm, stormLocs.pop())
+tiles.placeOnTile(storm2, stormLocs.pop())
 let sIsland0 = sprites.create(assets.image`skullIslandStrength1`, SpriteKind.skull)
 sIsland0.setPosition(256, 30)
 let sIsland1 = sprites.create(assets.image`skullIslandStrength1`, SpriteKind.skull)
@@ -339,10 +342,10 @@ forever(function () {
         }
     }
 })
-// after certain amount of time, storm destroyed
+// after certain amount of time, storm destroyed and new storm spawned
 forever(function () {
     stormLocs.push(newLoc(stormLocs, false))
-    tiles.placeOnTile(storm, stormLocs.pop())
+    tiles.placeOnTile(storm2, stormLocs.pop())
     for (let index = 0; index < 6; index++) {
         pause(2000)
     }
