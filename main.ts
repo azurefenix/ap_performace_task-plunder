@@ -44,21 +44,98 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 function xMarksTheSpot () {
-    messages = ["You found an abandoned ship. Gain one plunder point.", "Mutiny. loose 2 lives", "Taxes :("]
-    messageResults = [1, -2, -3]
-    messagePointsOrLife = [true, false, true]
-    whichMessage = randint(0, 2)
-    game.splash(messages[whichMessage])
+    messageNames = [
+    "The Kraken",
+    "Trove",
+    "Loot",
+    "Royal Navy",
+    "Tell No Tales",
+    "Scurvy",
+    "Pillage",
+    "Message in a Bottle",
+    "Mutiny",
+    "The Locker",
+    "Berth",
+    "Castaways",
+    "Man Overboard",
+    "Peg Legs",
+    "Notorious",
+    "Doubloons",
+    "Chest",
+    "Vermin"
+    ]
+    messages = [
+    "Ye fashion harpoons ta kill the monster guardin this treasure.",
+    "Good fortune finds ye when the changing tide reveals a cave of riches.",
+    "Ye intercept a supply run meant fer yer foes and take fer yourself.",
+    "Yer pirating ways be not appreciated. Perhaps a bribe will stay their guns.",
+    "Ye make sure only ye know where this treasure be.",
+    "Ye reach the treasure but yer voyage be plagued by sickness",
+    "Ye take what ye need then take more.",
+    "A floating missive tells the whereabouts of a pirate's secret stash.",
+    "With no treasure found, yer crew grows unruly. Squashin rebellions be costly",
+    "Those who stand between ye and treasure be sent ta the bottom.",
+    "After a fine haul yer weary sea legs could do with a bit of rest.",
+    "Ye find some scallywags left fer dead. They happily join yer ranks.",
+    "Yer lookout be tossed from the crow's nest.",
+    "The battle fer this treasure cost yer crew some limbs. They'll learn ta live with splinters.",
+    "Yer fame and legend grow with every haul. Sailors hasten ta join yer crew.",
+    "Ye vow ta empty these seas of every last coin.",
+    "Filled with riches this trunk be. Enjoy yer spoils.",
+    "Where treasure lived thar now be rats. Ye set em ablaze fer fear of plague."
+    ]
+    messageResults = [
+    -2,
+    3,
+    1,
+    -4,
+    -1,
+    -2,
+    2,
+    3,
+    -3,
+    -1,
+    3,
+    2,
+    -1,
+    2,
+    3,
+    2,
+    2,
+    -2
+    ]
+    messagePointsOrLife = [
+    false,
+    true,
+    true,
+    true,
+    false,
+    false,
+    true,
+    true,
+    true,
+    false,
+    false,
+    false,
+    false,
+    true,
+    false,
+    true,
+    true,
+    true
+    ]
+    whichMessage = randint(0, 17)
+    game.splash(messageNames[whichMessage], messages[whichMessage])
+    // points true
+    // lives false
     if (messagePointsOrLife[whichMessage]) {
-        if (info.score() > Math.abs(messageResults[whichMessage])) {
-            info.changeScoreBy(messageResults[whichMessage])
-        } else {
-            info.setLife(0)
-        }
+        info.changeScoreBy(messageResults[whichMessage])
     } else {
         info.changeLifeBy(messageResults[whichMessage])
         if (info.life() > 4) {
             info.setLife(4)
+        } else if (info.life() < 0) {
+            info.setLife(0)
         }
     }
 }
@@ -82,27 +159,27 @@ function gameEnd (wORl: boolean) {
     sprites.destroyAllSpritesOfKind(SpriteKind.Player)
     sprites.destroyAllSpritesOfKind(SpriteKind.cross)
     sprites.destroyAllSpritesOfKind(SpriteKind.storm)
+    sprites.destroyAllSpritesOfKind(SpriteKind.hold)
+    sprites.destroyAllSpritesOfKind(SpriteKind.skull)
     scene.setBackgroundImage(assets.image`endScreen`)
     tiles.setCurrentTilemap(tilemap`endMap`)
     if (wORl) {
-        winText = textsprite.create("You win!")
+        winText = "You win!"
     } else {
-        winText = textsprite.create("You lose :(")
+        winText = "You lost :("
     }
-    winText.setPosition(38, 57)
-    winText.setMaxFontHeight(10)
-    winText.setOutline(1, 10)
-    pause(5000)
+    game.splash(winText)
+    pause(2000)
     game.reset()
 }
-info.onScore(7, function () {
-    end = true
-    gameEnd(true)
-})
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     if (p.tileKindAt(TileDirection.Right, assets.tile`sea`)) {
         tiles.placeOnTile(p, p.tilemapLocation().getNeighboringLocation(CollisionDirection.Right))
     }
+})
+info.onScore(1, function () {
+    end = true
+    gameEnd(true)
 })
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     if (p.tileKindAt(TileDirection.Bottom, assets.tile`sea`)) {
@@ -127,15 +204,15 @@ function wantPlunderIsland () {
         pause(2000)
     }
 }
-// change tiles in storm, then when player overlap with tile
 sprites.onOverlap(SpriteKind.Player, SpriteKind.storm, function (sprite, otherSprite) {
-    info.changeLifeBy(-1)
-    pause(2000)
+    if (!(end)) {
+        info.changeLifeBy(-1)
+        pause(2000)
+    }
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.cross, function (sprite, otherSprite) {
     if (!(end)) {
         sprites.destroy(otherSprite)
-        info.changeScoreBy(1)
     }
 })
 // easy: if guess number within 2 of random number
@@ -173,11 +250,12 @@ function tryPlunderIsland () {
 let pStrength = 0
 let islandStrength = 0
 let islandDifficulty = 0
-let winText: TextSprite = null
+let winText = ""
 let whichMessage = 0
 let messagePointsOrLife: boolean[] = []
 let messageResults: number[] = []
 let messages: string[] = []
+let messageNames: string[] = []
 let count = 0
 let row = 0
 let col = 0
@@ -213,8 +291,6 @@ let mIsland1 = sprites.create(assets.image`skullIslandStrength2`, SpriteKind.sku
 mIsland1.setPosition(40, 265)
 let lIsland = sprites.create(assets.image`skullIslandStrength3`, SpriteKind.skull)
 lIsland.setPosition(248, 250)
-let flagCompare = sprites.create(assets.image`p1Flag`, SpriteKind.noInteraction)
-flagCompare.setPosition(-20, -20)
 forever(function () {
     if (true) {
         // ask if want to plunder island
