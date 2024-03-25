@@ -1,3 +1,4 @@
+// This game is based off the board game Plunder
 namespace SpriteKind {
     export const hold = SpriteKind.create()
     export const cross = SpriteKind.create()
@@ -8,7 +9,7 @@ namespace SpriteKind {
 // add bool to check if cross or storm
 // if cross can't be on land if storm can
 // if storm can't be on player if cross can
-function newLoc (list: tiles.Location[], cORs: boolean) {
+function newLoc(list: tiles.Location[], cORs: boolean) {
     posHolder = sprites.create(assets.image`posHolder`, SpriteKind.noInteraction)
     while (true) {
         col = randint(0, 16)
@@ -43,87 +44,87 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
         tiles.placeOnTile(p, p.tilemapLocation().getNeighboringLocation(CollisionDirection.Top))
     }
 })
-// Choose message for X sprites, use boolean to determine if add/subtract form points or life
-function xMarksTheSpot () {
+// Choose message for X sprites, use bool to determine if add/subtract form points or life
+function xMarksTheSpot() {
     messageNames = [
-    "The Kraken",
-    "Trove",
-    "Loot",
-    "Royal Navy",
-    "Tell No Tales",
-    "Scurvy",
-    "Pillage",
-    "Message in a Bottle",
-    "Mutiny",
-    "The Locker",
-    "Berth",
-    "Castaways",
-    "Man Overboard",
-    "Peg Legs",
-    "Notorious",
-    "Doubloons",
-    "Chest",
-    "Vermin"
+        "The Kraken",
+        "Trove",
+        "Loot",
+        "Royal Navy",
+        "Tell No Tales",
+        "Scurvy",
+        "Pillage",
+        "Message in a Bottle",
+        "Mutiny",
+        "The Locker",
+        "Berth",
+        "Castaways",
+        "Man Overboard",
+        "Peg Legs",
+        "Notorious",
+        "Doubloons",
+        "Chest",
+        "Vermin"
     ]
     messages = [
-    "Ye fashion harpoons ta kill the monster guardin this treasure.",
-    "Good fortune finds ye when the changing tide reveals a cave of riches.",
-    "Ye intercept a supply run meant fer yer foes and take fer yourself.",
-    "Yer pirating ways be not appreciated. Perhaps a bribe will stay their guns.",
-    "Ye make sure only ye know where this treasure be.",
-    "Ye reach the treasure but yer voyage be plagued by sickness",
-    "Ye take what ye need then take more.",
-    "A floating missive tells the whereabouts of a pirate's secret stash.",
-    "With no treasure found, yer crew grows unruly. Squashin rebellions be costly",
-    "Those who stand between ye and treasure be sent ta the bottom.",
-    "After a fine haul yer weary sea legs could do with a bit of rest.",
-    "Ye find some scallywags left fer dead. They happily join yer ranks.",
-    "Yer lookout be tossed from the crow's nest.",
-    "The battle fer this treasure cost yer crew some limbs. They'll learn ta live with splinters.",
-    "Yer fame and legend grow with every haul. Sailors hasten ta join yer crew.",
-    "Ye vow ta empty these seas of every last coin.",
-    "Filled with riches this trunk be. Enjoy yer spoils.",
-    "Where treasure lived thar now be rats. Ye set em ablaze fer fear of plague."
+        "Ye fashion harpoons ta kill the monster guardin this treasure.",
+        "Good fortune finds ye when the changing tide reveals a cave of riches.",
+        "Ye intercept a supply run meant fer yer foes and take fer yourself.",
+        "Yer pirating ways be not appreciated. Perhaps a bribe will stay their guns.",
+        "Ye make sure only ye know where this treasure be.",
+        "Ye reach the treasure but yer voyage be plagued by sickness",
+        "Ye take what ye need then take more.",
+        "A floating missive tells the whereabouts of a pirate's secret stash.",
+        "With no treasure found, yer crew grows unruly. Squashin rebellions be costly",
+        "Those who stand between ye and treasure be sent ta the bottom.",
+        "After a fine haul yer weary sea legs could do with a bit of rest.",
+        "Ye find some scallywags left fer dead. They happily join yer ranks.",
+        "Yer lookout be tossed from the crow's nest.",
+        "The battle fer this treasure cost yer crew some limbs. They'll learn ta live with splinters.",
+        "Yer fame and legend grow with every haul. Sailors hasten ta join yer crew.",
+        "Ye vow ta empty these seas of every last coin.",
+        "Filled with riches this trunk be. Enjoy yer spoils.",
+        "Where treasure lived thar now be rats. Ye set em ablaze fer fear of plague."
     ]
     messageResults = [
-    -2,
-    3,
-    1,
-    -4,
-    -1,
-    -2,
-    2,
-    3,
-    -3,
-    -1,
-    3,
-    2,
-    -1,
-    2,
-    3,
-    2,
-    2,
-    -2
+        -2,
+        3,
+        1,
+        -4,
+        -1,
+        -2,
+        2,
+        3,
+        -3,
+        -1,
+        3,
+        2,
+        -1,
+        2,
+        3,
+        2,
+        2,
+        -2
     ]
     messagePointsOrLife = [
-    false,
-    true,
-    true,
-    true,
-    false,
-    false,
-    true,
-    true,
-    true,
-    false,
-    false,
-    false,
-    false,
-    true,
-    false,
-    true,
-    true,
-    true
+        false,
+        true,
+        true,
+        true,
+        false,
+        false,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        true,
+        true,
+        true
     ]
     whichMessage = randint(0, 17)
     game.splash(messageNames[whichMessage], messages[whichMessage])
@@ -154,7 +155,7 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 // at game end destroy all sprites and display win/loose to player
-function gameEnd (wORl: boolean) {
+function gameEnd(wORl: boolean) {
     sprites.destroyAllSpritesOfKind(SpriteKind.Player)
     sprites.destroyAllSpritesOfKind(SpriteKind.cross)
     sprites.destroyAllSpritesOfKind(SpriteKind.storm)
@@ -192,7 +193,7 @@ info.onLifeZero(function () {
 // ask user if want to plunder Island
 // if yes, call tryPlunderIsland fuction to determine is plunder was successful
 // if successful, player gains 1 pt
-function wantPlunderIsland () {
+function wantPlunderIsland() {
     if (game.ask("Plunder Island?")) {
         if (tryPlunderIsland()) {
             game.splash("Island plundered")
@@ -221,7 +222,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.cross, function (sprite, otherSp
 // medium: if guess number within 1 of random number
 // hard: if guess number is random number
 // if player guess within bounds give return true so player gains 1 pt
-function tryPlunderIsland () {
+function tryPlunderIsland() {
     islandDifficulty = game.askForNumber("How many skulls were on the island? (1, 2, 3)", 1)
     while (islandDifficulty > 3) {
         islandDifficulty = game.askForNumber("How many skulls were on the island? (1, 2, 3)", 1)
@@ -300,9 +301,7 @@ forever(function () {
         // if y
         // win island
         // island yours and get 1 pt
-        // set island to plundered
-        // if plundered island plundered, island loose point
-        // if n
+        // if no
         // wait 5 sec
         if (p.tileKindAt(TileDirection.Left, assets.tile`landSand2`)) {
             wantPlunderIsland()
@@ -342,7 +341,7 @@ forever(function () {
         }
     }
 })
-// after certain amount of time, storm destroyed and new storm spawned
+// after 2 sec, storm destroyed and new storm spawned
 forever(function () {
     stormLocs.push(newLoc(stormLocs, false))
     tiles.placeOnTile(storm2, stormLocs.pop())
