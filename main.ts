@@ -5,6 +5,9 @@ namespace SpriteKind {
     export const skull = SpriteKind.create()
     export const noInteraction = SpriteKind.create()
 }
+/**
+ * This game is based off the board game plunder
+ */
 // add bool to check if cross or storm
 // if cross can't be on land if storm can
 // if storm can't be on player if cross can
@@ -171,14 +174,14 @@ function gameEnd (wORl: boolean) {
     pause(2000)
     game.reset()
 }
+info.onScore(7, function () {
+    end = true
+    gameEnd(true)
+})
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     if (p.tileKindAt(TileDirection.Right, assets.tile`sea`)) {
         tiles.placeOnTile(p, p.tilemapLocation().getNeighboringLocation(CollisionDirection.Right))
     }
-})
-info.onScore(1, function () {
-    end = true
-    gameEnd(true)
 })
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     if (p.tileKindAt(TileDirection.Bottom, assets.tile`sea`)) {
